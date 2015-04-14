@@ -14,15 +14,15 @@ Fields = {
 }
 def makeFact(line):
 	facts = []
-	facts.append("name " + line[Fields['Name']])
-	facts.append("cuisine " + line[Fields['Cuisine']])
+	facts.append("name \"" + line[Fields['Name']] + "\"")
+	facts.append("cuisine \"" + line[Fields['Cuisine']] + "\"")
 	if line[Fields['isVegetarian']] == 'TRUE':
-		facts.append("vegetarian")
+		facts.append("vegetarian TRUE")
 
 	if line[Fields['isSweet']] == 'TRUE':
-		facts.append("sweet")
+		facts.append("sweet TRUE")
 	if line[Fields['isSour']] == 'TRUE':
-		facts.append("sour")
+		facts.append("sour TRUE")
 	if line[Fields['isSpicy']] == 'FALSE':
 		facts.append("spiciness 0")
 	elif line[Fields['isSpicy']] == 'True 1':
@@ -38,13 +38,13 @@ def makeFact(line):
 		exit(0)
 
 	if line[Fields['isLowCalory']] == 'TRUE':
-		facts.append("lowcal")
+		facts.append("lowcal TRUE")
 	if line[Fields['isLowSodium']] == 'TRUE':
-		facts.append("lowna")
+		facts.append("lowna TRUE")
 	if line[Fields['isLowFat']] == 'TRUE':
-		facts.append("lowfat")
+		facts.append("lowfat TRUE")
 	if line[Fields['isHighFiber']] == 'TRUE':
-		facts.append("highfiber")
+		facts.append("highfiber TRUE")
 
 	return "(dish (" + ") (".join(facts) + "))"
 
