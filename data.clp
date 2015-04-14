@@ -8,8 +8,7 @@
     (slot lowcal (type SYMBOL) (default FALSE))
     (slot lowna (type SYMBOL) (default FALSE))
     (slot lowfat (type SYMBOL) (default FALSE))
-    (slot highfiber (type SYMBOL) (default FALSE))
-)
+    (slot highfiber (type SYMBOL) (default FALSE)))
 
 (deffacts dishes
     (dish (name "Bak kut teh") (cuisine "Chinese") (spiciness 2))
@@ -31,5 +30,4 @@
     (dish (name "Pasta") (cuisine "Western") (sour TRUE) (spiciness 0))
     (dish (name "Japanese Ramen") (cuisine "Japanese") (spiciness 0))
     (dish (name "Takoyaki") (cuisine "Japanese") (spiciness 0))
-    (dish (name "Seaweed Roll") (cuisine "Japanese") (vegetarian TRUE) (spiciness 0) (lowcal TRUE) (lowna TRUE) (lowfat TRUE))
-)
+    (dish (name "Seaweed Roll") (cuisine "Japanese") (vegetarian TRUE) (spiciness 0) (lowcal TRUE) (lowna TRUE) (lowfat TRUE)))
