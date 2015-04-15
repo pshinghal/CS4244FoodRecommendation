@@ -1,0 +1,6 @@
+(clear)
+(reset)
+(load "data.clp")
+(load "main.clp")
+(reset)
+(run)
