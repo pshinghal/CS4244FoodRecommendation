@@ -12,10 +12,11 @@ Fields = {
 	'isLowFat': 8,
 	'isHighFiber': 9
 }
+
 def makeFact(line):
 	facts = []
 	facts.append("name \"" + line[Fields['Name']] + "\"")
-	facts.append("cuisine \"" + line[Fields['Cuisine']] + "\"")
+	facts.append("cuisine " + line[Fields['Cuisine']])
 	if line[Fields['isVegetarian']] == 'TRUE':
 		facts.append("vegetarian TRUE")
 
