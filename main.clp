@@ -10,18 +10,40 @@
 (deffacts start
     (state start))
 
+(defrule suggest
+    (declare (salience 95))
+    ?state <- (state suggest)
+    =>
+    (bind ?dishes (find-all-facts ((?f dish)) (eq 1 1)))
+    (if (eq (length$ ?dishes 0))
+    then
+        (printout t "Sorry, I can't find any dishes you'd like! crlf")
+        (retract ?state)
+        (assert (state terminated))
+    else
+        (bind ?somedish (nth$ (+ 1 (mod (random) (length$ ?dishes))) ?dishes))
+        (bind ?name (fact-slot-value ?dish name))
+        (printout t "I'd suggest you have " ?name ". Does that sound good? (Yes/No)" crlf)
+        (bind ?response (read))
+        (if (eq ?response Yes)
+        then
+            (printout t "Great! Remember me the next time you're hungry." crlf)
+            (retract ?state)
+            (assert (state terminated))
+        else
+            (retract ?somedish)
+            (retract ?state)
+            (assert (state question)))))
+
 (defrule one-option-or-less
     (declare (salience 90))
     ?check <- (check-remaining)
+    ?state <- (state question)
     =>
-    (switch (length$ (find-all-facts ((?f dish)) (eq 1 1)))
-        (case 1 then
-            (bind ?dish (find-fact ((?n dish)) (eq 1 1)))
-            (bind ?name (fact-slot-value (nth$ 1 ?dish) name))
-            (printout t "You should have " ?name crlf))
-        (case 0 then
-            (printout t "Oops, I don't have any dish suitable for you! Let's try that again." crlf)
-            (reset)))
+    (if (< (length$ (find-all-facts ((?f dish)) (eq 1 1))) 2)
+    then
+        (retract ?state)
+        (assert (state suggest)))
     (retract ?check))
 
 (defrule ask-cuisine
@@ -91,7 +113,7 @@
 
 (defrule ask-taste
     (declare (salience 65))
-    (state question)
+    ?state <- (state question)
     (not (asked taste))
     =>
     (printout t "Do you have particular taste preferences? (Yes/No)" crlf)
@@ -99,12 +121,15 @@
     (if (eq ?response Yes)
     then
         (printout t "Got it. Let me ask you a few more questions about your taste preferences." crlf)
-        (assert (explore taste)))
+        (assert (explore taste))
+    else
+        (retract ?state)
+        (assert (state suggest)))
     (assert (asked taste)))
 
 (defrule ask-spiciness
     (declare (salience 60))
-    (state question)
+    ?state <- (state question)
     (not (asked spiciness))
     (explore taste)
     =>
@@ -150,7 +175,7 @@
 
 (defrule ask-sweet
     (declare (salience 54))
-    (state question)
+    ?state <- (state question)
     (not (asked sweet))
     (explore taste)
     =>
@@ -180,7 +205,7 @@
 
 (defrule ask-sour
     (declare (salience 48))
-    (state question)
+    ?state <- (state question)
     (not (asked sour))
     (explore taste)
     =>
@@ -206,11 +231,13 @@
     (not (checked-after sour))
     =>
     (assert (check-remaining))
-    (assert (checked-after sour)))
+    (assert (checked-after sour))
+    (retract ?state)
+    (assert (state suggest)))
 
 (defrule ask-nutrition
     (declare (salience 35))
-    (state question)
+    ?state <- (state question)
     (not (asked nutrition))
     =>
     (printout t "Do you want to specify any nutrition preferences? (Yes/No)" crlf)
@@ -218,12 +245,16 @@
     (if (eq ?response Yes)
     then
         (printout t "Got it. Let me ask you a few more questions about your nutrition preferences." crlf)
-        (assert (explore nutrition)))
+        (assert (explore nutrition))
+    else
+        (retract ?state)
+        (assert (state suggest))
+        (assert (asked all)))
     (assert (asked nutrition)))
 
 (defrule ask-lowcal
     (declare (salience 30))
-    (state question)
+    ?state <- (state question)
     (not (asked lowcal))
     (explore nutrition)
     =>
@@ -253,7 +284,7 @@
 
 (defrule ask-lowna
     (declare (salience 24))
-    (state question)
+    ?state <- (state question)
     (not (asked lowna))
     (explore nutrition)
     =>
@@ -283,7 +314,7 @@
 
 (defrule ask-lowfat
     (declare (salience 18))
-    (state question)
+    ?state <- (state question)
     (not (asked lowfat))
     (explore nutrition)
     =>
@@ -313,7 +344,7 @@
 
 (defrule ask-highfiber
     (declare (salience 12))
-    (state question)
+    ?state <- (state question)
     (not (asked highfiber))
     (explore nutrition)
     =>
@@ -339,4 +370,15 @@
     (not (checked-after highfiber))
     =>
     (assert (check-remaining))
-    (assert (checked-after highfiber)))
+    (assert (checked-after highfiber))
+    (retract ?state)
+    (assert (state suggest))
+    (assert (asked all)))
+
+(defrule out-of-questions
+    (declare (salience 6))
+    ?state <- (state question)
+    (asked all)
+    =>
+    (retract ?state)
+    (assert (state suggest)))
