@@ -2,7 +2,9 @@
     ?state <- (state start)
     =>
     (printout t crlf)
+    (printout t "*********************************************************************************" crlf)
     (printout t "Welcome to the world's most advanced food recommendation system [citation needed]" crlf)
+    (printout t "*********************************************************************************" crlf)
     (printout t crlf)
     (retract ?state)
     (assert (state question))))
@@ -20,22 +22,21 @@
     then
         (reset)
     else
-        (halt))
-    (printout t "*********************************************************************************" crlf crlf))
+        (halt)))
 
 (defrule suggest
     (declare (salience 95))
     ?state <- (state suggest)
     =>
     (bind ?dishes (find-all-facts ((?f dish)) (eq 1 1)))
-    (if (eq (length$ ?dishes 0))
+    (if (eq (length$ ?dishes) 0)
     then
-        (printout t "Sorry, I can't find any dishes you'd like! crlf")
+        (printout t "Sorry, I can't find any dishes you'd like!" crlf)
         (retract ?state)
         (assert (state terminated))
     else
         (bind ?somedish (nth$ (+ 1 (mod (random) (length$ ?dishes))) ?dishes))
-        (bind ?name (fact-slot-value ?dish name))
+        (bind ?name (fact-slot-value ?somedish name))
         (printout t "I'd suggest you have " ?name ". Does that sound good? (Yes/No)" crlf)
         (bind ?response (read))
         (if (eq ?response Yes)
@@ -64,7 +65,8 @@
     ?state <- (state question)
     (not (asked cuisine))
     =>
-    (printout t "Do you prefer any particular cuisine? (None/Chinese/Malay/Indian/Seafood/Western/Japanese/CrossCultural)" crlf)
+    (printout t "Do you prefer any particular cuisine?" crlf)
+    (printout t "(None/Chinese/Malay/Indian/Seafood/Western/Japanese/CrossCultural)" crlf)
     (bind ?response (read))
     (switch ?response
         (case Chinese then (assert (preference (property cuisine) (symbolValue Chinese))))
@@ -74,7 +76,7 @@
         (case Western then (assert (preference (property cuisine) (symbolValue Western))))
         (case Japanese then (assert (preference (property cuisine) (symbolValue Japanese))))
         (case CrossCultural then (assert (preference (property cuisine) (symbolValue CrossCultural))))
-        (default (printout t "Great, so we'll search across all cuisines!" crlf)))
+        (default (printout t "Great, so I'll search across all cuisines!" crlf)))
     (assert (asked cuisine)))
 
 (defrule process-cuisine
@@ -104,7 +106,7 @@
     (switch ?response
         (case Yes then (assert (preference (property vegetarian) (symbolValue TRUE))))
         (case No then (assert (preference (property vegetarian) (symbolValue FALSE))))
-        (default (printout t "Great, so we'll search across vegetarian AND non-vegetarian dishes!" crlf)))
+        (default (printout t "Great, so I'll search across vegetarian AND non-vegetarian dishes!" crlf)))
     (assert (asked vegetarian)))
 
 (defrule process-vegetarian
@@ -242,6 +244,7 @@
     (declare (salience 44))
     (preference (property sour))
     (not (checked-after sour))
+    ?state <- (state question)
     =>
     (assert (check-remaining))
     (assert (checked-after sour))
@@ -381,6 +384,7 @@
     (declare (salience 8))
     (preference (property highfiber))
     (not (checked-after highfiber))
+    ?state <- (state question)
     =>
     (assert (check-remaining))
     (assert (checked-after highfiber))
