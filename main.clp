@@ -10,6 +10,19 @@
 (deffacts start
     (state start))
 
+(defrule terminate
+    (declare (salience 99))
+    (state terminated)
+    =>
+    (printout t "Would you like to try that again? (Yes/No)" crlf)
+    (bind ?response (read))
+    (if (eq ?response Yes)
+    then
+        (reset)
+    else
+        (halt))
+    (printout t "*********************************************************************************" crlf crlf))
+
 (defrule suggest
     (declare (salience 95))
     ?state <- (state suggest)
