@@ -220,3 +220,123 @@
         (printout t "Got it. Let me ask you a few more questions about your nutrition preferences." crlf)
         (assert (explore nutrition)))
     (assert (asked nutrition)))
+
+(defrule ask-lowcal
+    (declare (salience 30))
+    (state question)
+    (not (asked lowcal))
+    (explore nutrition)
+    =>
+    (printout t "Do you prefer food that has low calories? (Yes/No/Either)" crlf)
+    (bind ?response (read))
+    (switch ?response
+        (case Yes then (assert (preference (property lowcal) (symbolValue TRUE))))
+        (case No then (assert (preference (property lowcal) (symbolValue FALSE)))))
+    (assert (asked lowcal)))
+
+(defrule process-lowcal
+    (declare (salience 28))
+    (preference (property lowcal) (symbolValue ?preferred))
+    ?dish <- (dish (lowcal ?found))
+    =>
+    (if (not (eq ?found ?preferred))
+    then
+        (retract ?dish)))
+
+(defrule check-after-lowcal
+    (declare (salience 26))
+    (preference (property lowcal))
+    (not (checked-after lowcal))
+    =>
+    (assert (check-remaining))
+    (assert (checked-after lowcal)))
+
+(defrule ask-lowna
+    (declare (salience 24))
+    (state question)
+    (not (asked lowna))
+    (explore nutrition)
+    =>
+    (printout t "Do you prefer food that has low sodium? (Yes/No/Either)" crlf)
+    (bind ?response (read))
+    (switch ?response
+        (case Yes then (assert (preference (property lowna) (symbolValue TRUE))))
+        (case No then (assert (preference (property lowna) (symbolValue FALSE)))))
+    (assert (asked lowna)))
+
+(defrule process-lowna
+    (declare (salience 22))
+    (preference (property lowna) (symbolValue ?preferred))
+    ?dish <- (dish (lowna ?found))
+    =>
+    (if (not (eq ?found ?preferred))
+    then
+        (retract ?dish)))
+
+(defrule check-after-lowna
+    (declare (salience 20))
+    (preference (property lowna))
+    (not (checked-after lowna))
+    =>
+    (assert (check-remaining))
+    (assert (checked-after lowna)))
+
+(defrule ask-lowfat
+    (declare (salience 18))
+    (state question)
+    (not (asked lowfat))
+    (explore nutrition)
+    =>
+    (printout t "Do you prefer food that has low fat? (Yes/No/Either)" crlf)
+    (bind ?response (read))
+    (switch ?response
+        (case Yes then (assert (preference (property lowfat) (symbolValue TRUE))))
+        (case No then (assert (preference (property lowfat) (symbolValue FALSE)))))
+    (assert (asked lowfat)))
+
+(defrule process-lowfat
+    (declare (salience 16))
+    (preference (property lowfat) (symbolValue ?preferred))
+    ?dish <- (dish (lowfat ?found))
+    =>
+    (if (not (eq ?found ?preferred))
+    then
+        (retract ?dish)))
+
+(defrule check-after-lowfat
+    (declare (salience 14))
+    (preference (property lowfat))
+    (not (checked-after lowfat))
+    =>
+    (assert (check-remaining))
+    (assert (checked-after lowfat)))
+
+(defrule ask-highfiber
+    (declare (salience 12))
+    (state question)
+    (not (asked highfiber))
+    (explore nutrition)
+    =>
+    (printout t "Do you prefer food that has high fiber? (Yes/No/Either)" crlf)
+    (bind ?response (read))
+    (switch ?response
+        (case Yes then (assert (preference (property highfiber) (symbolValue TRUE))))
+        (case No then (assert (preference (property highfiber) (symbolValue FALSE)))))
+    (assert (asked highfiber)))
+
+(defrule process-highfiber
+    (declare (salience 10))
+    (preference (property highfiber) (symbolValue ?preferred))
+    ?dish <- (dish (highfiber ?found))
+    =>
+    (if (not (eq ?found ?preferred))
+    then
+        (retract ?dish)))
+
+(defrule check-after-highfiber
+    (declare (salience 8))
+    (preference (property highfiber))
+    (not (checked-after highfiber))
+    =>
+    (assert (check-remaining))
+    (assert (checked-after highfiber)))
